@@ -5,7 +5,7 @@
 # Chunis Deng (chunchengfh@gmail.com)
 # ver: 0.1, 2011/06/27
 
-db='files.db'
+db="/tmp/files.db"
 path=$1
 
 if [ "$path" = "" ]; then

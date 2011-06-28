@@ -33,29 +33,45 @@ class MyListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin, ColumnSorterMixin):
 
 	def set_value(self, files):
 		for file in files:
-			name = os.path.basename(file)
-			size = str(os.path.getsize(file)) + ' B'
-			ctime = time.ctime(os.path.getmtime(file))
-			dir = os.path.dirname(file)
+			try:
+				name = os.path.basename(file)
+				size = str(os.path.getsize(file)) + ' B'
+				ctime = time.ctime(os.path.getmtime(file))
+				dir = os.path.dirname(file)
 
-			item = (name, size, ctime, dir)
-			index = self.InsertStringItem(sys.maxint, item[0])
-			for col, text in enumerate(item[1:]):
-				self.SetStringItem(index, col+1, text)
-			self.SetItemData(index, index)
-			self.itemDataMap[index] = item
+				item = (name, size, ctime, dir)
+				index = self.InsertStringItem(sys.maxint, item[0])
+				for col, text in enumerate(item[1:]):
+					self.SetStringItem(index, col+1, text)
+				self.SetItemData(index, index)
+				self.itemDataMap[index] = item
+			except:
+				pass
+
+
+def to_unicode_or_bust( obj, encoding='utf-8'):
+	if isinstance(obj, basestring):
+		if not isinstance(obj, unicode):
+			obj = unicode(obj, encoding)
+	return obj
+
 
 def find_str(mylist, str):
 	ret_list = []
+	tlist = str.strip().split()
+
+	#tlist = [ unicode(x, 'utf-8') for x in tlist ]
+	tlist = [ to_unicode_or_bust(x) for x in tlist ]
+
 	for x in mylist:
 		flag = True
 		name = os.path.basename(x)
-		for y in str.strip().split():
+		for y in tlist:
 			s = name.find(y)
 			if s == -1:
 				break
 		else:
-			ret_list += [x]
+			ret_list += [x.encode('utf-8')]
 
 	return ret_list
 
@@ -71,9 +87,10 @@ class MyFrame(wx.Frame):
 
         self.__set_properties()
         self.__do_layout()
-	self.files = open('files.db').readlines()
+	self.files = open('/tmp/files.db').readlines()
 	self.files = [ x.strip() for x in self.files ]
-	self.list_ctrl_1.set_value(self.files)
+	self.ufiles = [ x.decode('utf-8') for x in self.files ]
+	self.list_ctrl_1.set_value(self.ufiles)
 	self.valstr = []
 
         self.Bind(wx.EVT_TEXT, self.doSearch, self.text_ctrl_1)
@@ -121,10 +138,11 @@ class MyFrame(wx.Frame):
     def doSearch(self, event): # wxGlade: MyFrame.<event_handler>
 	self.list_ctrl_1.DeleteAllItems()
 
-	self.search_str = self.text_ctrl_1.GetValue()
-	#print self.search_str
+	search_str = self.text_ctrl_1.GetValue()
+	#print search_str
 
-	file_list = find_str(self.files, self.search_str)
+	#file_list = find_str(self.ufiles, search_str.decode('utf-8'))
+	file_list = find_str(self.ufiles, search_str)
 	self.list_ctrl_1.set_value(file_list)
 	# print file_list
         # event.Skip()
