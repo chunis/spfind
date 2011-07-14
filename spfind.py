@@ -32,10 +32,11 @@ rdbfile.close()
 
 class MyListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin, ColumnSorterMixin):
 	def __init__(self, parent, id):
-		wx.ListCtrl.__init__(self, parent, id, style=wx.LC_REPORT)
+		wx.ListCtrl.__init__(self, parent, id, style=wx.LC_REPORT|wx.LC_VIRTUAL)
 		ListCtrlAutoWidthMixin.__init__(self)
 		ColumnSorterMixin.__init__(self, 6)
 		self.itemDataMap = {}
+		self.SetItemCount(len(newlst))
 
 		self.InsertColumn(0, "Name", width=220)
 		self.InsertColumn(1, "Size", format=wx.LIST_FORMAT_RIGHT, width=80)
@@ -44,6 +45,10 @@ class MyListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin, ColumnSorterMixin):
 
 	def GetListCtrl(self):
 		return self
+
+	def OnGetItemText(self, item, col):
+		data = newlst[item]
+		return data[col]
 
 	def set_value(self, files):
 #		for file in files:
@@ -62,6 +67,7 @@ class MyListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin, ColumnSorterMixin):
 				self.itemDataMap[index] = item
 			except:
 				pass
+		#self.RefreshItems(0, len(newlst))
 
 
 def to_unicode_or_bust( obj, encoding='utf-8'):
