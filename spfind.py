@@ -32,6 +32,22 @@ class MyListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin, ColumnSorterMixin):
 	def GetListCtrl(self):
 		return self
 
+	def GetColumnSorter(self):
+		if self._col == 1:
+			return self.StrToFloatSorter
+		return ColumnSorterMixin.GetColumnSorter(self)
+
+	def StrToFloatSorter(self, key1, key2):
+		col = self._col
+		item1 = self.itemDataMap[key1][col]
+		item2 = self.itemDataMap[key2][col]
+
+		ascending = self._colSortFlag[col]
+		if ascending:
+			return int(item1[:-1]) - int(item2[:-1])
+		else:
+			return int(item2[:-1]) - int(item1[:-1])
+
 	def set_value(self, files):
 		for file in files:
 			try:
