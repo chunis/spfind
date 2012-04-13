@@ -93,88 +93,88 @@ def find_str(mylist, str):
 
 
 class MyFrame(wx.Frame):
-    def __init__(self, *args, **kwds):
-        # begin wxGlade: MyFrame.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
-        wx.Frame.__init__(self, *args, **kwds)
-        self.text_ctrl_1 = wx.TextCtrl(self, -1, "")
-        self.text_ctrl_1.SetFocus()
-        # self.list_ctrl_1 = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
-        self.list_ctrl_1 = MyListCtrl(self, -1)
+	def __init__(self, *args, **kwds):
+		# begin wxGlade: MyFrame.__init__
+		kwds["style"] = wx.DEFAULT_FRAME_STYLE
+		wx.Frame.__init__(self, *args, **kwds)
+		self.text_ctrl_1 = wx.TextCtrl(self, -1, "")
+		self.text_ctrl_1.SetFocus()
+		# self.list_ctrl_1 = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+		self.list_ctrl_1 = MyListCtrl(self, -1)
 
-        self.__set_properties()
-        self.__do_layout()
-	self.files = open(DB_FILE).readlines()
-	self.files = [ x.strip() for x in self.files ]
-	self.ufiles = [ x.decode('utf-8') for x in self.files ]
-	self.list_ctrl_1.set_value(self.ufiles)
-	self.valstr = []
+		self.__set_properties()
+		self.__do_layout()
+		self.files = open(DB_FILE).readlines()
+		self.files = [ x.strip() for x in self.files ]
+		self.ufiles = [ x.decode('utf-8') for x in self.files ]
+		self.list_ctrl_1.set_value(self.ufiles)
+		self.valstr = []
 
-        self.Bind(wx.EVT_TEXT, self.doSearch, self.text_ctrl_1)
+		self.Bind(wx.EVT_TEXT, self.doSearch, self.text_ctrl_1)
 
-	self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onItemSelected, self.list_ctrl_1)
-	self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onItemDeselected, self.list_ctrl_1)
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onOpenItem, self.list_ctrl_1)
-        # end wxGlade
+		self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onItemSelected, self.list_ctrl_1)
+		self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onItemDeselected, self.list_ctrl_1)
+		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onOpenItem, self.list_ctrl_1)
+		# end wxGlade
 
-    def __set_properties(self):
-        # begin wxGlade: MyFrame.__set_properties
-        self.SetTitle("SPFind: Simple PyFind")
-        self.SetSize((1000, 560))
-        self.list_ctrl_1.SetMinSize((680, 355))
-        # end wxGlade
+	def __set_properties(self):
+		# begin wxGlade: MyFrame.__set_properties
+		self.SetTitle("SPFind: Simple PyFind")
+		self.SetSize((1000, 560))
+		self.list_ctrl_1.SetMinSize((680, 355))
+		# end wxGlade
 
-    def __do_layout(self):
-        # begin wxGlade: MyFrame.__do_layout
-        sizer_1 = wx.BoxSizer(wx.VERTICAL)
-        sizer_2 = wx.BoxSizer(wx.VERTICAL)
-        sizer_2.Add(self.text_ctrl_1, 0, wx.EXPAND, 0)
-        sizer_2.Add(self.list_ctrl_1, 1, wx.EXPAND, 0)
-        sizer_1.Add(sizer_2, 1, wx.EXPAND, 0)
-        self.SetSizer(sizer_1)
-        self.Layout()
-        # end wxGlade
+	def __do_layout(self):
+		# begin wxGlade: MyFrame.__do_layout
+		sizer_1 = wx.BoxSizer(wx.VERTICAL)
+		sizer_2 = wx.BoxSizer(wx.VERTICAL)
+		sizer_2.Add(self.text_ctrl_1, 0, wx.EXPAND, 0)
+		sizer_2.Add(self.list_ctrl_1, 1, wx.EXPAND, 0)
+		sizer_1.Add(sizer_2, 1, wx.EXPAND, 0)
+		self.SetSizer(sizer_1)
+		self.Layout()
+		# end wxGlade
 
-    def onItemSelected(self, event):
-	self.select = event.GetIndex()
-	#print 'self.select:', self.select
+	def onItemSelected(self, event):
+		self.select = event.GetIndex()
+		#print 'self.select:', self.select
 
-    def onItemDeselected(self, event):
-	#self.select = event.GetIndex
-	pass
+	def onItemDeselected(self, event):
+		#self.select = event.GetIndex
+		pass
 
-    def onOpenItem(self, event):
-	#index = event.GetIndex()
-	index = self.select
-	name = self.list_ctrl_1.GetItem(index).GetText()
-	dir = self.list_ctrl_1.GetItem(index, DIR_COL).GetText()
-	print 'Selected %s' %(os.path.join(dir, name))
-	file = os.path.join(dir, name)
-	tool.openfile(file)
+	def onOpenItem(self, event):
+		#index = event.GetIndex()
+		index = self.select
+		name = self.list_ctrl_1.GetItem(index).GetText()
+		dir = self.list_ctrl_1.GetItem(index, DIR_COL).GetText()
+		print 'Selected %s' %(os.path.join(dir, name))
+		file = os.path.join(dir, name)
+		tool.openfile(file)
 
-    def doSearch(self, event): # wxGlade: MyFrame.<event_handler>
-	self.list_ctrl_1.DeleteAllItems()
+	def doSearch(self, event): # wxGlade: MyFrame.<event_handler>
+		self.list_ctrl_1.DeleteAllItems()
 
-	search_str = self.text_ctrl_1.GetValue()
-	#print search_str
+		search_str = self.text_ctrl_1.GetValue()
+		#print search_str
 
-	#file_list = find_str(self.ufiles, search_str.decode('utf-8'))
-	file_list = find_str(self.ufiles, search_str)
-	self.list_ctrl_1.set_value(file_list)
-	# print file_list
-        # event.Skip()
+		#file_list = find_str(self.ufiles, search_str.decode('utf-8'))
+		file_list = find_str(self.ufiles, search_str)
+		self.list_ctrl_1.set_value(file_list)
+		# print file_list
+		# event.Skip()
 
-#    def onOpenItem(self, event): # wxGlade: MyFrame.<event_handler>
-#        print "Event handler `onOpenItem' not implemented!"
-#        event.Skip()
+	def onOpenItem(self, event): # wxGlade: MyFrame.<event_handler>
+		print "Event handler `onOpenItem' not implemented!"
+		event.Skip()
 
 # end of class MyFrame
 
 
 if __name__ == "__main__":
-    spfind = wx.PySimpleApp(0)
-    wx.InitAllImageHandlers()
-    frame_1 = MyFrame(None, -1, "")
-    spfind.SetTopWindow(frame_1)
-    frame_1.Show()
-    spfind.MainLoop()
+	spfind = wx.PySimpleApp(0)
+	wx.InitAllImageHandlers()
+	frame_1 = MyFrame(None, -1, "")
+	spfind.SetTopWindow(frame_1)
+	frame_1.Show()
+	spfind.MainLoop()
