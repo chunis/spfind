@@ -175,6 +175,8 @@ def open(url, desktop=None, wait=0):
 
     elif (desktop or detected) == "GNOME":
         cmd = ["gnome-open", url]
+        #cmd = ["mimeopen", url]
+        #cmd = ["xdg-open", url]
 
     elif (desktop or detected) == "Mac OS X":
         cmd = ["open", url]

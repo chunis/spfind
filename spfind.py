@@ -11,6 +11,7 @@ import tool
 
 
 DIR_COL = 3
+DB_FILE = "/tmp/mysfind.db"
 
 # begin wxGlade: extracode
 # end wxGlade
@@ -23,9 +24,9 @@ class MyListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin, ColumnSorterMixin):
 		ColumnSorterMixin.__init__(self, 6)
 		self.itemDataMap = {}
 
-		self.InsertColumn(0, "Name", width=220)
-		self.InsertColumn(1, "Size", format=wx.LIST_FORMAT_RIGHT, width=80)
-		self.InsertColumn(2, "Date Modified", format=wx.LIST_FORMAT_RIGHT, width=160)
+		self.InsertColumn(0, "Name", width=540)
+		self.InsertColumn(1, "Size", format=wx.LIST_FORMAT_RIGHT, width=100)
+		self.InsertColumn(2, "Date Modified", format=wx.LIST_FORMAT_RIGHT, width=210)
 		self.InsertColumn(3, "Directory", width=240)
 
 	def GetListCtrl(self):
@@ -35,8 +36,8 @@ class MyListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin, ColumnSorterMixin):
 		for file in files:
 			try:
 				name = os.path.basename(file)
-				size = str(os.path.getsize(file)) + ' B'
-				ctime = time.ctime(os.path.getmtime(file))
+				size = str(os.path.getsize(file)/1024) + 'K'
+				ctime = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(os.path.getmtime(file)))
 				dir = os.path.dirname(file)
 
 				item = (name, size, ctime, dir)
@@ -65,10 +66,9 @@ def find_str(mylist, str):
 
 	for x in mylist:
 		flag = True
-		name = os.path.basename(x)
+		name = os.path.basename(x).lower()
 		for y in tlist:
-			s = name.find(y)
-			if s == -1:
+			if y.lower() not in name:
 				break
 		else:
 			ret_list += [x.encode('utf-8')]
@@ -82,12 +82,13 @@ class MyFrame(wx.Frame):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
         self.text_ctrl_1 = wx.TextCtrl(self, -1, "")
+        self.text_ctrl_1.SetFocus()
         # self.list_ctrl_1 = wx.ListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.list_ctrl_1 = MyListCtrl(self, -1)
 
         self.__set_properties()
         self.__do_layout()
-	self.files = open('/tmp/files.db').readlines()
+	self.files = open(DB_FILE).readlines()
 	self.files = [ x.strip() for x in self.files ]
 	self.ufiles = [ x.decode('utf-8') for x in self.files ]
 	self.list_ctrl_1.set_value(self.ufiles)
@@ -103,7 +104,7 @@ class MyFrame(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("SPFind: Simple PyFind")
-        self.SetSize((680, 392))
+        self.SetSize((1000, 560))
         self.list_ctrl_1.SetMinSize((680, 355))
         # end wxGlade
 
