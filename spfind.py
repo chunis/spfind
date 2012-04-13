@@ -164,9 +164,9 @@ class MyFrame(wx.Frame):
 		# print file_list
 		# event.Skip()
 
-	def onOpenItem(self, event): # wxGlade: MyFrame.<event_handler>
-		print "Event handler `onOpenItem' not implemented!"
-		event.Skip()
+#	def onOpenItem(self, event): # wxGlade: MyFrame.<event_handler>
+#		print "Event handler `onOpenItem' not implemented!"
+#		event.Skip()
 
 # end of class MyFrame
 
