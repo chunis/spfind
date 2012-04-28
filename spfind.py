@@ -115,6 +115,21 @@ class MyFrame(wx.Frame):
 		self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onItemSelected, self.list_ctrl_1)
 		self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onItemDeselected, self.list_ctrl_1)
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onOpenItem, self.list_ctrl_1)
+		self.list_ctrl_1.Bind(wx.EVT_CHAR, self.onEsc)
+		self.text_ctrl_1.Bind(wx.EVT_CHAR, self.onEsc)
+
+	def onEsc(self, event):
+		key_code = event.GetKeyCode()
+		# print "Key: ", key_code
+		if key_code == 27:	# ESC pressed
+			search_str = self.text_ctrl_1.GetValue()
+			if search_str != "":
+				self.text_ctrl_1.SetValue("")
+			else:
+				self.Close()
+		else:
+			event.Skip()
+
 		# end wxGlade
 
 	def __set_properties(self):
