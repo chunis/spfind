@@ -94,6 +94,14 @@ def find_str(mylist, str):
 
 class MyFrame(wx.Frame):
 	def __init__(self, *args, **kwds):
+		self.select = 0
+
+		self.open_file_id = wx.NewId()
+		self.open_dir_id = wx.NewId()
+		self.clear_id = wx.NewId()
+		self.copy_id = wx.NewId()
+		self.move_id = wx.NewId()
+
 		# begin wxGlade: MyFrame.__init__
 		kwds["style"] = wx.DEFAULT_FRAME_STYLE
 		wx.Frame.__init__(self, *args, **kwds)
@@ -115,8 +123,11 @@ class MyFrame(wx.Frame):
 		self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onItemSelected, self.list_ctrl_1)
 		self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onItemDeselected, self.list_ctrl_1)
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onOpenItem, self.list_ctrl_1)
+		self.Bind(wx.EVT_CONTEXT_MENU, self.onRightClick, self.list_ctrl_1)
 		self.list_ctrl_1.Bind(wx.EVT_CHAR, self.onEsc)
 		self.text_ctrl_1.Bind(wx.EVT_CHAR, self.onEsc)
+
+		# end wxGlade
 
 	def onEsc(self, event):
 		key_code = event.GetKeyCode()
@@ -130,7 +141,66 @@ class MyFrame(wx.Frame):
 		else:
 			event.Skip()
 
-		# end wxGlade
+	def onRightClick(self, event):
+		#print 'Right click now...'
+		menu = wx.Menu()
+
+		menu.Append(self.open_file_id, "Open")
+		menu.Append(self.open_dir_id, "Open Directory")
+		menu.Append(self.copy_id, "Copy to...")
+		menu.Append(self.move_id, "Move to...")
+
+		self.Bind(wx.EVT_MENU, self.onOpenItem, id = self.open_file_id)
+		self.Bind(wx.EVT_MENU, self.onOpenDir, id = self.open_dir_id)
+		self.Bind(wx.EVT_MENU, self.onCopy, id = self.copy_id)
+		self.Bind(wx.EVT_MENU, self.onMove, id = self.move_id)
+
+		self.PopupMenu(menu)
+		menu.Destroy()
+
+	def onOpenDir(self, event):
+		#index = event.GetIndex()
+		index = self.select
+		dir = self.list_ctrl_1.GetItem(index, DIR_COL).GetText()
+		tool.openfile(dir)
+
+	def prepareCopyOrMove(self, event, string, func):
+		#index = event.GetIndex()
+		index = self.select
+		name = self.list_ctrl_1.GetItem(index).GetText()
+		dir = self.list_ctrl_1.GetItem(index, DIR_COL).GetText()
+		print 'Selected %s' %(os.path.join(dir, name))
+		file = os.path.join(dir, name)
+
+		dir = wx.DirDialog(None, string)
+		if dir.ShowModal() == wx.ID_OK:
+			dest_path = dir.GetPath()
+		dir.Destroy()
+
+		# Test if it will overwrite existed file
+		tmp_file = os.path.join(dest_path, name)
+		if os.path.exists(tmp_file):
+			dlg = wx.MessageDialog(None, '%s already exist!\n'
+				'Do you want to overwrite it?' %tmp_file,
+				'File exist',
+				wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+			retcode = dlg.ShowModal()
+			dlg.Destroy()
+
+			if retcode == wx.ID_NO:
+				return
+
+		func(file, dest_path)
+
+
+	def onCopy(self, event):
+		self.prepareCopyOrMove(event, "Copy File To...", tool.copyfile)
+
+
+	def onMove(self, event):
+		self.prepareCopyOrMove(event, "Move File To...", tool.movefile)
+		# TODO
+		# if moved, update that file's new status
 
 	def __set_properties(self):
 		# begin wxGlade: MyFrame.__set_properties
@@ -178,10 +248,6 @@ class MyFrame(wx.Frame):
 		self.list_ctrl_1.set_value(file_list)
 		# print file_list
 		# event.Skip()
-
-#	def onOpenItem(self, event): # wxGlade: MyFrame.<event_handler>
-#		print "Event handler `onOpenItem' not implemented!"
-#		event.Skip()
 
 # end of class MyFrame
 
