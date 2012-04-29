@@ -172,6 +172,12 @@ class MyFrame(wx.Frame):
 		print 'Selected %s' %(os.path.join(dir, name))
 		file = os.path.join(dir, name)
 
+		if not os.path.exists(file):
+			wx.MessageBox("File '%s' doesn't exist!\n"
+				"Have you move it already?" %file, "No File Found",
+				style=wx.OK|wx.ICON_ERROR)
+			return
+
 		dir = wx.DirDialog(None, string)
 		if dir.ShowModal() == wx.ID_OK:
 			dest_path = dir.GetPath()
