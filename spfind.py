@@ -26,10 +26,6 @@ rdbfile.close()
 #	print x
 
 
-# begin wxGlade: extracode
-# end wxGlade
-
-
 class MyListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin, ColumnSorterMixin):
 	def __init__(self, parent, id):
 		wx.ListCtrl.__init__(self, parent, id, style=wx.LC_REPORT|wx.LC_VIRTUAL)
