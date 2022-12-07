@@ -184,7 +184,7 @@ def open(url, desktop=None, wait=0):
     # Finish with an error where no suitable desktop was identified.
 
     else:
-        raise OSError, "Desktop not supported (neither DESKTOP_LAUNCH nor os.startfile could be used)"
+        raise OSError("Desktop not supported (neither DESKTOP_LAUNCH nor os.startfile could be used)")
 
     return _wait(subprocess.Popen(cmd).pid, wait)
 

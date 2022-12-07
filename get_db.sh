@@ -5,7 +5,7 @@
 # Chunis Deng (chunchengfh@gmail.com)
 # ver: 0.1, 2011/06/27
 
-db="/tmp/files.db"
+db="/tmp/myspfind.db"
 path=$1
 
 if [ "$path" = "" ]; then
@@ -17,4 +17,4 @@ echo $path | grep -s '^/'
 echo $path
 
 rm -f $db
-find $path -name '*' > $db
+find $path -type f > $db
